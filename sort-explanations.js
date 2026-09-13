@@ -1,0 +1,11 @@
+const fs = require('fs');
+const f = 'C:\\Users\\Riguel\\Documents\\REVIEWERS\\qna\\napolcom-explanations.js';
+const s = fs.readFileSync(f, 'utf8');
+const re = /^\s*(\d+): `([^`]*)`,?$/gm;
+const m = [...s.matchAll(re)];
+const entries = m.map(x => ({ k: parseInt(x[1]), v: x[2] }));
+entries.sort((a, b) => a.k - b.k);
+const lines = entries.map(x => `  ${x.k}: \`${x.v}\``);
+const out = 'const explanations = {\n' + lines.map((l, i) => l + (i < lines.length - 1 ? ',' : '')).join('\n') + '\n};\n';
+fs.writeFileSync(f, out);
+console.log('Sorted', entries.length, 'explanations.');
