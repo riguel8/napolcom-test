@@ -1,4 +1,3 @@
-const pdfUrl = 'Q%26A.pdf';
 const answerKey = "CDDADAAACABBCABCCDCA" +
   "DDCACBAABCDBCADBDDDA" +
   "ACABCACCBAADBBCBDADC" +
@@ -78,7 +77,7 @@ function renderHome(root) {
     <div class="container">
       <div class="hero">
         <h2>Test your readiness for the PNP Entrance Exam</h2>
-        <p>Practice against 150 real NAPOLCOM simulation items across four sections. The Q&amp;A PDF is your source document for all questions, explanations, and the answer key.</p>
+        <p>Practice against 150 real NAPOLCOM simulation items across four sections. Questions, answer key, and explanations are included in the app.</p>
         <button class="btn btn-primary" onclick="startExam(true)">Start Practice Exam</button>
         ${hasProgress ? `<button class="btn btn-secondary" style="margin-left:12px" onclick="resumeExam()">Resume Attempt</button>` : ''}
       </div>
@@ -112,7 +111,7 @@ function renderInstructions(root) {
           <li>Unanswered questions are clearly identified in the navigator.</li>
           <li>Review your answers before submitting.</li>
           <li>Your score will be calculated automatically after submission.</li>
-          <li>Explanations are in the Q&amp;A PDF you provided.</li>
+          <li>Explanations are shown after you submit the exam.</li>
         </ul>
         <div style="margin-top:24px;display:flex;gap:12px">
           <button class="btn btn-secondary" onclick="goHome()">Back to Home</button>
@@ -131,7 +130,7 @@ function renderExam(root) {
   const pct = (answeredCount / total) * 100;
   const q = (typeof examQuestions !== 'undefined' && examQuestions[n - 1]) ? examQuestions[n - 1] : null;
   const hasQ = q && q.q;
-  const questionText = hasQ ? '<div style="font-size:1.05rem;line-height:1.5;margin:0 0 20px;white-space:pre-wrap">' + q.q + '</div>' : '<p style="color:var(--muted);font-size:.9rem;margin:-12px 0 20px">Read question ' + n + ' in the Q&amp;A PDF, then choose your answer below.</p>';
+  const questionText = hasQ ? '<div style="font-size:1.05rem;line-height:1.5;margin:0 0 20px;white-space:pre-wrap">' + q.q + '</div>' : '<p style="color:var(--muted);font-size:.9rem;margin:-12px 0 20px">Question ' + n + ' text is not available. Please choose your best answer below.</p>';
   let passageText = '';
   if (q && q.passage) passageText = '<div style="background:#f8f9fa;border:1px solid #dadce0;border-radius:8px;padding:16px;margin:0 0 20px;font-size:.95rem;line-height:1.5;white-space:pre-wrap">' + q.passage + '</div>';
   else if (q && q.passageRef) {
@@ -294,6 +293,10 @@ function renderResults(root) {
     </div>
     <div class="container">
       <div class="card results">
+        <div class="footer-actions" style="padding-bottom:0">
+          <button class="btn btn-primary" onclick="renderReview()">Review Answers</button>
+          <button class="btn btn-secondary" onclick="resetExam()">Retake Exam</button>
+        </div>
         <div class="score-ring">
           <span>${res.percentage}%</span>
           <small>${res.totalCorrect} / ${total}</small>
@@ -312,10 +315,6 @@ function renderResults(root) {
             return `<tr><td>${s.name}</td><td>${s.correct}/${s.count}</td><td>${pct}%</td></tr>`;
           }).join('')}
         </table>
-        <div class="footer-actions">
-          <button class="btn btn-primary" onclick="renderReview()">Review Answers</button>
-          <button class="btn btn-secondary" onclick="resetExam()">Retake Exam</button>
-        </div>
       </div>
     </div>`;
 }
@@ -332,14 +331,14 @@ function renderReview(root) {
     </div>
     <div class="container">
       <div class="card results">
+        <div class="footer-actions" style="padding-bottom:0">
+          <button class="btn btn-secondary" onclick="resetExam()">Retake Exam</button>
+          <button class="btn btn-secondary" onclick="goHome()">Home</button>
+        </div>
         <div class="review-filters">
           ${Object.entries(filters).map(([k,v]) => `<button class="${reviewFilter === k ? 'active' : ''}" onclick="setReviewFilter('${k}')">${v}</button>`).join('')}
         </div>
         <div class="review-list" id="reviewList"></div>
-        <div class="footer-actions">
-          <button class="btn btn-secondary" onclick="resetExam()">Retake Exam</button>
-          <button class="btn btn-secondary" onclick="goHome()">Home</button>
-        </div>
       </div>
     </div>`;
   renderReviewList();
@@ -367,7 +366,7 @@ function renderReviewList() {
       <div class="review-item ${status}">
         <h4>Question ${i} · ${sec.name}</h4>
         <p><b>Your Answer:</b> ${yours || '—'} &nbsp; <b>Correct Answer:</b> ${correct} &nbsp; ${flagged ? '· ⚑ Flagged' : ''}</p>
-        ${explanation ? '<p style="margin-top:6px;white-space:pre-wrap"><b>Explanation:</b> ' + explanation + '</p>' : '<p style="margin-top:6px">Status: ' + (status === 'correct' ? 'Correct' : status === 'wrong' ? 'Incorrect' : 'Unanswered') + '. See the Q&amp;A PDF for the explanation.</p>'}
+        ${explanation ? '<p style="margin-top:6px;white-space:pre-wrap"><b>Explanation:</b> ' + explanation + '</p>' : '<p style="margin-top:6px">Status: ' + (status === 'correct' ? 'Correct' : status === 'wrong' ? 'Incorrect' : 'Unanswered') + '. No explanation is available for this item.</p>'}
       </div>`;
   }
   list.innerHTML = html || '<p style="color:var(--muted)">No questions match this filter.</p>';
@@ -391,8 +390,10 @@ function enterExam() {
 
 function resumeExam() {
   if (state.status === 'in_progress') {
+    state.view = 'exam';
+    saveState();
     render();
-    if (state.view === 'exam') startTimer();
+    startTimer();
   } else { enterExam(); }
 }
 
