@@ -61,6 +61,7 @@ function render() {
   else if (state.view === 'exam') renderExam(app);
   else if (state.view === 'section_transition') renderSectionTransition(app);
   else if (state.view === 'submit_confirm') renderSubmitConfirm(app);
+  else if (state.view === 'cancel_confirm') renderCancelConfirm(app);
   else if (state.view === 'results') renderResults(app);
   else if (state.view === 'review') renderReview(app);
   saveState();
@@ -241,6 +242,20 @@ function renderSubmitConfirm(root) {
     </div>`;
 }
 
+function renderCancelConfirm(root) {
+  root.innerHTML = `
+    <div class="cancel-dialog">
+      <div class="dialog-card">
+        <h3>Cancel exam?</h3>
+        <p>Your progress is saved and you can resume later. Are you sure you want to leave?</p>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" onclick="closeDialog()">Keep Exam</button>
+          <button class="btn btn-danger" onclick="confirmCancel()">Cancel Exam</button>
+        </div>
+      </div>
+    </div>`;
+}
+
 function computeResults() {
   const perSection = sections.map(s => ({ ...s, correct: 0, count: s.end - s.start + 1 }));
   let totalCorrect = 0, totalAnswered = 0, totalUnanswered = 0;
@@ -399,13 +414,8 @@ function toggleFlag() { state.flags[state.current] = !state.flags[state.current]
 
 function showSubmitConfirm() { state.view = 'submit_confirm'; saveState(); render(); }
 function closeDialog() { state.view = 'exam'; saveState(); render(); }
-function cancelExam() {
-  if (!confirm('Are you sure you want to cancel the exam? Your progress is saved and you can resume later.')) return;
-  stopTimer();
-  state.view = 'home';
-  saveState();
-  render();
-}
+function cancelExam() { state.view = 'cancel_confirm'; saveState(); render(); }
+function confirmCancel() { stopTimer(); state.view = 'home'; saveState(); render(); }
 
 function autoSubmit() { submitExam(true); }
 
