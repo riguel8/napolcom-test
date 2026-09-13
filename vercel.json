@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "name": "napolcom-practice-exam",
+  "rewrites": [
+    { "source": "/", "destination": "/napolcom-answer-form.html" }
+  ]
+}
