@@ -64,7 +64,7 @@ button { font-family: inherit; }
 .navigator button.current { background: var(--primary); color: #fff; border-color: var(--primary); }
 .navigator button.answered { background: #e8f0fe; border-color: var(--primary); color: var(--primary); }
 .navigator button.flagged::after { content: '•'; color: var(--warning); }
-.section-transition, .submit-dialog, .cancel-dialog, .resume-dialog { position: fixed; inset: 0; background: rgba(32,33,36,.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.section-transition, .submit-dialog, .cancel-dialog, .reset-dialog { position: fixed; inset: 0; background: rgba(32,33,36,.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
 .dialog-card { background: var(--card); border-radius: var(--radius); padding: 32px; width: min(460px, 92%); box-shadow: 0 4px 20px rgba(0,0,0,.15); }
 .dialog-card h3 { margin: 0 0 12px; }
 .dialog-card p { color: var(--muted); line-height: 1.6; margin: 0 0 24px; }

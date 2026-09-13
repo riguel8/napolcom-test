@@ -62,6 +62,7 @@ function render() {
   else if (state.view === 'section_transition') renderSectionTransition(app);
   else if (state.view === 'submit_confirm') renderSubmitConfirm(app);
   else if (state.view === 'cancel_confirm') renderCancelConfirm(app);
+  else if (state.view === 'reset_confirm') renderResetConfirm(app);
   else if (state.view === 'results') renderResults(app);
   else if (state.view === 'review') renderReview(app);
   saveState();
@@ -256,6 +257,20 @@ function renderCancelConfirm(root) {
     </div>`;
 }
 
+function renderResetConfirm(root) {
+  root.innerHTML = `
+    <div class="reset-dialog">
+      <div class="dialog-card">
+        <h3>Start a new attempt?</h3>
+        <p>Your current answers and progress will be cleared. This cannot be undone.</p>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" onclick="closeDialog()">Keep Attempt</button>
+          <button class="btn btn-danger" onclick="confirmReset()">Restart Exam</button>
+        </div>
+      </div>
+    </div>`;
+}
+
 function computeResults() {
   const perSection = sections.map(s => ({ ...s, correct: 0, count: s.end - s.start + 1 }));
   let totalCorrect = 0, totalAnswered = 0, totalUnanswered = 0;
@@ -428,8 +443,8 @@ function submitExam(auto) {
   render();
 }
 
-function resetExam() {
-  if (!confirm('Start a new attempt? Your current answers will be cleared.')) return;
+function resetExam() { state.view = 'reset_confirm'; saveState(); render(); }
+function confirmReset() {
   stopTimer();
   localStorage.removeItem(STORAGE_KEY);
   state = { view:'home', current:1, answers:{}, flags:{}, remaining:150*60, status:'not_started', startedAt:null, submittedAt:null };
