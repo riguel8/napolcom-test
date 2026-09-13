@@ -154,7 +154,7 @@ function renderExam(root) {
     <div class="exam-toolbar">
       <div><b>PNP Entrance Exam</b> · ${sec.name}</div>
       <div class="timer ${state.remaining < 600 ? 'low' : ''}" id="timer">${formatTime(state.remaining)}</div>
-      <div style="display:flex;gap:8px">
+      <div class="toolbar-actions">
         <button class="btn btn-sm btn-secondary" onclick="cancelExam()">Cancel</button>
         <button class="btn btn-sm btn-primary" onclick="showSubmitConfirm()">Submit</button>
       </div>
